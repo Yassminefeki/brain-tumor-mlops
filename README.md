@@ -4,7 +4,7 @@
 
 **A comparative study of convolutional neural networks, built on a reproducible MLOps pipeline**
 
-[![CI](https://github.com/YOUR-GITHUB-USER/brain-tumor-mlops/actions/workflows/ci.yml/badge.svg)](https://github.com/YOUR-GITHUB-USER/brain-tumor-mlops/actions/workflows/ci.yml)
+[![CI](https://github.com/Yassminefeki/brain-tumor-mlops/actions/workflows/ci.yml/badge.svg)](https://github.com/Yassminefeki/brain-tumor-mlops/actions/workflows/ci.yml)
 ![Python](https://img.shields.io/badge/python-3.10%2B-blue)
 ![PyTorch](https://img.shields.io/badge/PyTorch-2.x-ee4c2c)
 ![DVC](https://img.shields.io/badge/data-DVC-945dd6)
@@ -55,7 +55,7 @@ CI (pytest, GitHub Actions), explainability (Grad-CAM) and serving (FastAPI, Gra
 
 | Model | Test accuracy | Test macro-F1 | Recall meningioma | Params | ms / image |
 |---|---|---|---|---|---|
-| Majority class (baseline) | — | — | — | — | — |
+| Majority class (baseline) | 0.448 | 0.206 | 0.000 | — | — |
 | Custom CNN | — | — | — | 2.39 M | — |
 | ResNet-18 | — | — | — | 11.2 M | — |
 | EfficientNet-B0 | — | — | — | 4.0 M | — |
@@ -98,7 +98,7 @@ bash scripts/bootstrap.sh
 Teammate cloning the existing repository:
 
 ```bash
-git clone https://github.com/YOUR-GITHUB-USER/brain-tumor-mlops.git
+git clone https://github.com/Yassminefeki/brain-tumor-mlops.git
 cd brain-tumor-mlops
 python3 -m venv .venv && source .venv/bin/activate
 make install-dev          # package + dev tools + git hooks
@@ -128,8 +128,12 @@ make train MODEL=resnet18
 python -m brain_tumor.train train.model=efficientnet_b0 train.batch_size=64
 ```
 
-On Google Colab, open [`notebooks/02_colab_runner.ipynb`](notebooks/02_colab_runner.ipynb):
-it clones the repo, pulls the data and launches the same commands on a GPU.
+Training needs a GPU: on a laptop CPU one epoch of the custom CNN takes 5–30 minutes. Use
+Google Colab: open [`notebooks/02_colab_runner.ipynb`](notebooks/02_colab_runner.ipynb), select a
+GPU runtime and add a `GITHUB_TOKEN` secret (the repository is private). It clones the repo, gets
+the data (`dvc pull` from DagsHub, or `dvc repro` from Figshare without DagsHub), runs the same
+commands and copies checkpoints, reports and `mlflow.db` to Google Drive. Copy the final
+`models/best.pt` back into `models/` to serve it locally.
 
 ### 4. Inspect results
 

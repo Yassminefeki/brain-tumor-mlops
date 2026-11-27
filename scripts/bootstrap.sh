@@ -39,7 +39,7 @@ if ! python -c "import torch" >/dev/null 2>&1; then
 fi
 
 step "Installing the package and dev tools (this can take a few minutes)"
-python -m pip install --quiet -e . -r requirements-dev.txt
+python -m pip install --quiet -e . -r requirements-dev.txt -r requirements-api.txt
 
 step "Git repository"
 if [[ ! -d .git ]]; then

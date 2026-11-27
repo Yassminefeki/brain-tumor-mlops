@@ -78,9 +78,16 @@ runs go to a local SQLite file (`mlflow.db`); view them with
 
 1. Open `notebooks/02_colab_runner.ipynb` from GitHub in Colab
    (*File → Open notebook → GitHub*).
-2. Add secrets (key icon): `DAGSHUB_USER`, `DAGSHUB_TOKEN`, optionally `GITHUB_TOKEN`
-   (a fine-grained token with *contents: write* on this repository only).
+2. Add secrets (key icon, enable *Notebook access*):
+   - `GITHUB_TOKEN`: **required while the repository is private** (cloning), also used to push
+     tuned parameters. A fine-grained token with *contents: read and write* on this repository only.
+   - `DAGSHUB_USER`, `DAGSHUB_TOKEN`: optional. With them, data comes from `dvc pull` and runs
+     go to the DagsHub MLflow server. Without them, the notebook rebuilds the data with
+     `dvc repro` (same version, guaranteed by `dvc.lock`) and logs to a local `mlflow.db`.
 3. *Runtime → Change runtime type → GPU*, then run the cells.
+4. The last section copies `models/`, `reports/`, `configs/` and `mlflow.db` to
+   `MyDrive/brain-tumor-mlops-results/`. Copy `models/best.pt` into the local `models/`
+   folder to serve it with `make api` / `make demo` / Docker.
 
 ## 7. GitHub Actions
 
@@ -107,8 +114,9 @@ dvc push                                           # BEFORE git push if data cha
 git push -u origin feat/<task>                     # open a pull request
 ```
 
-Training happens on Colab and logs straight to MLflow, so nothing needs to be copied back,
-except tuned parameters (`configs/best_params/`), which are committed.
+Training happens on Colab. With DagsHub, runs are logged straight to the shared MLflow
+server; without it, use the Google Drive copy made by the notebook. Tuned parameters
+(`configs/best_params/`) are committed.
 
 ## Troubleshooting
 

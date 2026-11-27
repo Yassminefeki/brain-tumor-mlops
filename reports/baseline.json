@@ -1,0 +1,19 @@
+{
+  "accuracy": 0.44761904761904764,
+  "macro_f1": 0.20614035087719298,
+  "macro_precision": 0.1492063492063492,
+  "macro_recall": 0.3333333333333333,
+  "precision_meningioma": 0.0,
+  "recall_meningioma": 0.0,
+  "f1_meningioma": 0.0,
+  "support_meningioma": 112,
+  "precision_glioma": 0.44761904761904764,
+  "recall_glioma": 1.0,
+  "f1_glioma": 0.618421052631579,
+  "support_glioma": 188,
+  "precision_pituitary": 0.0,
+  "recall_pituitary": 0.0,
+  "f1_pituitary": 0.0,
+  "support_pituitary": 120,
+  "majority_class": "glioma"
+}

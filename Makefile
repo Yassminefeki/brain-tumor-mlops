@@ -11,8 +11,8 @@ help: ## Show this help
 install: ## Install the package and runtime dependencies
 	$(PYTHON) -m pip install -e .
 
-install-dev: ## Install dev tools (tests, lint, pre-commit) and git hooks
-	$(PYTHON) -m pip install -e . -r requirements-dev.txt
+install-dev: ## Install dev tools, serving deps (API, Gradio) and git hooks
+	$(PYTHON) -m pip install -e . -r requirements-dev.txt -r requirements-api.txt
 	pre-commit install
 
 data: ## Run the full DVC data pipeline (download -> validate)
