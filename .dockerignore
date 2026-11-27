@@ -1,0 +1,11 @@
+.git
+.dvc/cache
+data
+mlruns
+notebooks
+tests
+docs
+reports
+.venv
+**/__pycache__
+.env

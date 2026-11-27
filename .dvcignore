@@ -1,0 +1,4 @@
+# Files DVC should ignore when hashing tracked directories.
+.DS_Store
+__MACOSX/
+*.tmp

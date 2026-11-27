@@ -1,0 +1,39 @@
+# ---- Data (versioned by DVC, never by Git) ----
+/data/raw
+/data/interim
+/data/processed
+/data/metadata.csv
+/data/splits.csv
+
+# ---- Model weights and run outputs (stored as MLflow artifacts) ----
+/models/
+/mlruns/
+/mlartifacts/
+/optuna*.db
+/mlflow.db
+/reports/runs/
+
+# ---- Secrets ----
+.env
+.dvc/config.local
+
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# ---- Notebooks / editors / OS ----
+.ipynb_checkpoints/
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

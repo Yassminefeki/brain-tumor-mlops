@@ -1,0 +1,44 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "brain-tumor-mlops"
+version = "0.1.0"
+description = "Comparative study of CNN architectures for brain tumour MRI classification, with a reproducible MLOps pipeline."
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.10"
+authors = [{ name = "Yassmine" }]
+keywords = ["deep-learning", "cnn", "mri", "brain-tumor", "mlops", "pytorch", "dvc", "mlflow"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: MIT License",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+  "Topic :: Scientific/Engineering :: Medical Science Apps.",
+]
+dynamic = ["dependencies"]
+
+[tool.setuptools.dynamic]
+dependencies = { file = ["requirements.txt"] }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]  # makes the top-level `api` package importable with plain `pytest`
+addopts = "-q"
+markers = ["slow: tests that train a model for a few steps"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "SIM"]
+ignore = ["B008"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["brain_tumor"]

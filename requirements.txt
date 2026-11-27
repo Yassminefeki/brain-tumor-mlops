@@ -1,0 +1,17 @@
+# Core runtime dependencies (installed by `pip install -e .`).
+# On Colab, torch/torchvision are pre-installed with CUDA: pip keeps them.
+torch>=2.2
+torchvision>=0.17
+numpy>=1.26
+pandas>=2.1
+scikit-learn>=1.4
+h5py>=3.10
+opencv-python-headless>=4.9
+pyyaml>=6.0
+requests>=2.31
+matplotlib>=3.8
+tqdm>=4.66
+mlflow>=2.12
+optuna>=3.6
+dvc>=3.50
+python-dotenv>=1.0

@@ -1,0 +1,72 @@
+# Reproducible data pipeline. Run everything with `dvc repro`;
+# DVC re-executes only the stages whose code, inputs or params changed.
+# Training runs on GPU (Colab) and is tracked by MLflow, not by DVC.
+
+stages:
+  download:
+    cmd: python -m brain_tumor.data.ingest download
+    deps:
+      - src/brain_tumor/data/ingest.py
+    params:
+      - data.figshare_article_id
+      - paths.raw_dir
+    outs:
+      - data/raw:
+          persist: true   # keep finished downloads if the stage is re-run after a network error
+
+  extract:
+    cmd: python -m brain_tumor.data.ingest extract
+    deps:
+      - src/brain_tumor/data/ingest.py
+      - data/raw
+    params:
+      - data.expected_images
+      - paths.interim_dir
+    outs:
+      - data/interim
+
+  metadata:
+    cmd: python -m brain_tumor.data.metadata
+    deps:
+      - src/brain_tumor/data/metadata.py
+      - src/brain_tumor/data/mat_io.py
+      - data/interim
+    outs:
+      - data/metadata.csv
+
+  preprocess:
+    cmd: python -m brain_tumor.data.preprocess
+    deps:
+      - src/brain_tumor/data/preprocess.py
+      - src/brain_tumor/data/mat_io.py
+      - data/interim
+      - data/metadata.csv
+    params:
+      - preprocess
+    outs:
+      - data/processed
+
+  split:
+    cmd: python -m brain_tumor.data.split
+    deps:
+      - src/brain_tumor/data/split.py
+      - data/metadata.csv
+    params:
+      - seed
+      - split
+    outs:
+      - data/splits.csv
+
+  validate:
+    cmd: python -m brain_tumor.data.validate
+    deps:
+      - src/brain_tumor/data/validate.py
+      - data/metadata.csv
+      - data/splits.csv
+      - data/processed
+    params:
+      - data
+      - preprocess.image_size
+    metrics:
+      - reports/data_validation.json:
+          cache: false

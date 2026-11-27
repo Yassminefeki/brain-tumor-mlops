@@ -1,0 +1,30 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below, together with the dataset references."
+title: "Brain Tumor MRI Classification: a Comparative Study of CNNs with an MLOps Pipeline"
+version: 0.1.0
+date-released: 2026-11-27
+license: MIT
+authors:
+  - given-names: Yassmine Feki & Nour Al Houda Ben Slimene
+    affiliation: "Faculté des Sciences de Sfax, Département d'Informatique et des Communications"
+references:
+  - type: article
+    title: "Enhanced Performance of Brain Tumor Classification via Tumor Region Augmentation and Partition"
+    authors:
+      - family-names: Cheng
+        given-names: Jun
+    journal: "PLoS ONE"
+    volume: 10
+    issue: 10
+    year: 2015
+    notes: "e0140381"
+  - type: article
+    title: "Retrieval of Brain Tumors by Adaptive Spatial Pooling and Fisher Vector Representation"
+    authors:
+      - family-names: Cheng
+        given-names: Jun
+    journal: "PLoS ONE"
+    volume: 11
+    issue: 6
+    year: 2016
+    notes: "e0157112"

@@ -1,0 +1,114 @@
+# =============================================================================
+# Single source of truth for every path and hyperparameter of the project.
+# DVC tracks the sections used by each pipeline stage (see dvc.yaml), and every
+# training run logs the full resolved configuration to MLflow.
+#
+# Override any value from the command line with dotted keys, e.g.:
+#   python -m brain_tumor.train train.model=resnet18 train.epochs=20
+# =============================================================================
+
+seed: 42
+
+paths:
+  raw_dir: data/raw
+  interim_dir: data/interim
+  processed_dir: data/processed
+  metadata: data/metadata.csv
+  splits: data/splits.csv
+  models_dir: models
+  reports_dir: reports
+  best_params_dir: configs/best_params
+
+data:
+  figshare_article_id: 1512427
+  expected_images: 3064
+  expected_patients: 233
+  expected_class_counts: {meningioma: 708, glioma: 1426, pituitary: 930}
+  # Original labels in the .mat files are 1, 2, 3 -> mapped to 0, 1, 2.
+  class_names: [meningioma, glioma, pituitary]
+
+preprocess:
+  image_size: 224
+  clip_percentiles: [0.5, 99.5]   # robust intensity clipping before min-max scaling
+  dtype: float16                  # halves disk usage (~300 MB instead of ~600 MB)
+  save_masks: true                # tumour masks, used to sanity-check Grad-CAM
+
+split:
+  train: 0.70
+  val: 0.15
+  test: 0.15
+  n_folds: 5                      # patient-level StratifiedGroupKFold (bonus experiment)
+
+train:
+  model: custom_cnn               # custom_cnn | resnet18 | resnet50 | efficientnet_b0 | densenet121
+  split_column: split             # split (patient-level) | image_split (leaky, for comparison only)
+  fold: null                      # int in [0, n_folds) to train on a CV fold instead of the fixed split
+  epochs: 50
+  batch_size: 32
+  num_workers: 2
+  optimizer: adamw
+  lr: 1.0e-3                      # used by the custom CNN (pretrained models use models.pretrained.*)
+  weight_decay: 1.0e-4
+  scheduler: cosine               # cosine | plateau | none
+  warmup_epochs: 1
+  patience: 8                     # early stopping on validation macro-F1
+  label_smoothing: 0.1
+  class_weights: true
+  augment: true
+  amp: true                       # mixed precision, only active on CUDA
+  max_batches: null               # int: cap batches per epoch (smoke tests / CI)
+
+augment:
+  rotation_degrees: 15
+  hflip_p: 0.5
+  scale: [0.9, 1.1]
+  translate: 0.05
+  brightness: 0.1
+  contrast: 0.1
+
+models:
+  custom_cnn:
+    filters: [32, 64, 128, 256, 256]
+    convs_per_block: 2
+    kernel_size: 3
+    batch_norm: true
+    global_pool: gap              # gap | flatten
+    dense_units: 128
+    dropout_before_dense: 0.5
+    dropout_after_dense: 0.3
+  pretrained:
+    weights: imagenet             # imagenet | none
+    dropout: 0.4
+    freeze_epochs: 3              # stage 1: train the head only
+    head_lr: 1.0e-3
+    backbone_lr: 1.0e-4           # late backbone layers in stage 2
+    early_layers_lr: 1.0e-5       # early backbone layers in stage 2 (discriminative LR)
+    epochs: 20
+    patience: 5
+
+evaluate:
+  tta: true                       # average predictions with the horizontal flip
+  gradcam_samples: 8
+
+tune:
+  n_trials: 20
+  epochs: 10
+  timeout_minutes: null
+  pruner_warmup_epochs: 3
+  search_space:
+    custom_cnn:
+      lr: {low: 1.0e-4, high: 3.0e-3, log: true}
+      weight_decay: {low: 1.0e-5, high: 1.0e-2, log: true}
+      dropout_before_dense: {low: 0.2, high: 0.6}
+      dense_units: {choices: [64, 128, 256]}
+      base_filters: {choices: [16, 32]}
+      n_blocks: {choices: [4, 5]}
+    pretrained:
+      backbone_lr: {low: 1.0e-5, high: 5.0e-4, log: true}
+      weight_decay: {low: 1.0e-5, high: 1.0e-2, log: true}
+      dropout: {low: 0.2, high: 0.6}
+      freeze_epochs: {choices: [0, 2, 4]}
+
+mlflow:
+  experiment_prefix: brain-tumor
+  registered_model_name: brain-tumor-classifier
