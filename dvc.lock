@@ -1,0 +1,161 @@
+schema: '2.0'
+stages:
+  download:
+    cmd: python -m brain_tumor.data.ingest download
+    deps:
+    - path: src/brain_tumor/data/ingest.py
+      hash: md5
+      md5: 2237195e6a3dabbd9f65f1709704c531
+      size: 6288
+    params:
+      params.yaml:
+        data.figshare_article_id: 1512427
+        paths.raw_dir: data/raw
+    outs:
+    - path: data/raw
+      hash: md5
+      md5: 42fcdb7b27728b80a3ad4b43e469e3f1.dir
+      size: 879503178
+      nfiles: 7
+  extract:
+    cmd: python -m brain_tumor.data.ingest extract
+    deps:
+    - path: data/raw
+      hash: md5
+      md5: 42fcdb7b27728b80a3ad4b43e469e3f1.dir
+      size: 879503178
+      nfiles: 7
+    - path: src/brain_tumor/data/ingest.py
+      hash: md5
+      md5: 2237195e6a3dabbd9f65f1709704c531
+      size: 6288
+    params:
+      params.yaml:
+        data.expected_images: 3064
+        paths.interim_dir: data/interim
+    outs:
+    - path: data/interim
+      hash: md5
+      md5: bf5af92ba93c01b77a5e31faf5e6b244.dir
+      size: 922084750
+      nfiles: 3064
+  metadata:
+    cmd: python -m brain_tumor.data.metadata
+    deps:
+    - path: data/interim
+      hash: md5
+      md5: bf5af92ba93c01b77a5e31faf5e6b244.dir
+      size: 922084750
+      nfiles: 3064
+    - path: src/brain_tumor/data/mat_io.py
+      hash: md5
+      md5: 84f51be09f81ccc087019118bdfbe763
+      size: 2175
+    - path: src/brain_tumor/data/metadata.py
+      hash: md5
+      md5: 50e6c60313c64c75414127674a3fb9a5
+      size: 3129
+    outs:
+    - path: data/metadata.csv
+      hash: md5
+      md5: 3e1f5cfa43cbd1298d72559ce812c1de
+      size: 227069
+  preprocess:
+    cmd: python -m brain_tumor.data.preprocess
+    deps:
+    - path: data/interim
+      hash: md5
+      md5: bf5af92ba93c01b77a5e31faf5e6b244.dir
+      size: 922084750
+      nfiles: 3064
+    - path: data/metadata.csv
+      hash: md5
+      md5: 3e1f5cfa43cbd1298d72559ce812c1de
+      size: 227069
+    - path: src/brain_tumor/data/mat_io.py
+      hash: md5
+      md5: 84f51be09f81ccc087019118bdfbe763
+      size: 2175
+    - path: src/brain_tumor/data/preprocess.py
+      hash: md5
+      md5: 37e45e16e9e55600cbce57566ef68281
+      size: 3930
+    params:
+      params.yaml:
+        preprocess:
+          image_size: 224
+          clip_percentiles:
+          - 0.5
+          - 99.5
+          dtype: float16
+          save_masks: true
+    outs:
+    - path: data/processed
+      hash: md5
+      md5: 84ec2eb29767d529deda7fb6ac510c57.dir
+      size: 462002305
+      nfiles: 6129
+  split:
+    cmd: python -m brain_tumor.data.split
+    deps:
+    - path: data/metadata.csv
+      hash: md5
+      md5: 3e1f5cfa43cbd1298d72559ce812c1de
+      size: 227069
+    - path: src/brain_tumor/data/split.py
+      hash: md5
+      md5: eca41796dc661d4cd2054034486d3bd3
+      size: 5941
+    params:
+      params.yaml:
+        seed: 42
+        split:
+          train: 0.7
+          val: 0.15
+          test: 0.15
+          n_folds: 5
+    outs:
+    - path: data/splits.csv
+      hash: md5
+      md5: 300cf995d1e43178663d9867ca878363
+      size: 85153
+  validate:
+    cmd: python -m brain_tumor.data.validate
+    deps:
+    - path: data/metadata.csv
+      hash: md5
+      md5: 3e1f5cfa43cbd1298d72559ce812c1de
+      size: 227069
+    - path: data/processed
+      hash: md5
+      md5: 84ec2eb29767d529deda7fb6ac510c57.dir
+      size: 462002305
+      nfiles: 6129
+    - path: data/splits.csv
+      hash: md5
+      md5: 300cf995d1e43178663d9867ca878363
+      size: 85153
+    - path: src/brain_tumor/data/validate.py
+      hash: md5
+      md5: 55759913ba96c5e2ba3ecbadf9973aa5
+      size: 6062
+    params:
+      params.yaml:
+        data:
+          figshare_article_id: 1512427
+          expected_images: 3064
+          expected_patients: 233
+          expected_class_counts:
+            meningioma: 708
+            glioma: 1426
+            pituitary: 930
+          class_names:
+          - meningioma
+          - glioma
+          - pituitary
+        preprocess.image_size: 224
+    outs:
+    - path: reports/data_validation.json
+      hash: md5
+      md5: db83ebbd718b6f4ae5f4c9f85ca84940
+      size: 1209

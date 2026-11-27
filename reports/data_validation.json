@@ -1,0 +1,43 @@
+{
+  "passed": true,
+  "n_checks": 9,
+  "n_failed": 0,
+  "checks": {
+    "counts": {
+      "passed": true,
+      "detail": "3064 images (expected 3064), 233 patients (expected 233)"
+    },
+    "class_counts": {
+      "passed": true,
+      "detail": "actual {'glioma': 1426, 'pituitary': 930, 'meningioma': 708}, expected {'meningioma': 708, 'glioma': 1426, 'pituitary': 930}"
+    },
+    "one_label_per_patient": {
+      "passed": true,
+      "detail": "0 patients with more than one label"
+    },
+    "unique_image_ids": {
+      "passed": true,
+      "detail": "0 duplicated image ids"
+    },
+    "all_images_assigned": {
+      "passed": true,
+      "detail": "0 images without a valid split"
+    },
+    "no_patient_overlap": {
+      "passed": true,
+      "detail": "shared patients {'train/val': 0, 'train/test': 0, 'val/test': 0}"
+    },
+    "all_classes_in_each_split": {
+      "passed": true,
+      "detail": "classes per split {'test': 3, 'train': 3, 'val': 3}"
+    },
+    "patient_level_folds": {
+      "passed": true,
+      "detail": "5 folds, test excluded: True, each patient in exactly one fold: True"
+    },
+    "processed_arrays": {
+      "passed": true,
+      "detail": "all arrays OK"
+    }
+  }
+}
