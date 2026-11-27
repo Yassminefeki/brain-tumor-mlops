@@ -1,6 +1,8 @@
 # Model card — brain tumour MRI classifier
 
-> Complete the *Performance* section with the final MLflow run before submission.
+> Performance from the Colab T4 run of 2026-11-27 (logs in
+> [`notebooks/runs/02_colab_runner_2026-11-27.ipynb`](../notebooks/runs/02_colab_runner_2026-11-27.ipynb)).
+> Per-class recall: fill in from MLflow (`mlflow.db` on Google Drive) before submission.
 
 ## Model details
 
@@ -8,11 +10,11 @@
 |---|---|
 | **Task** | 3-class classification of a single MRI slice: meningioma / glioma / pituitary tumour |
 | **Architectures compared** | Custom CNN (2.39 M params), ResNet-18, EfficientNet-B0 (+ optional ResNet-50, DenseNet-121) |
-| **Selected model** | *to fill: name, MLflow run ID, registry version* |
+| **Selected model** | ResNet-18, two-stage fine-tuning from ImageNet (11.2 M params); run `resnet18-final-20261127-210836`, registered as `brain-tumor-classifier` version 1 |
 | **Framework** | PyTorch, torchvision |
 | **Input** | one grayscale slice, any size; clipped to 0.5–99.5 percentiles, scaled to [0, 1], resized to 224 × 224 |
 | **Output** | probabilities for the 3 classes |
-| **Authors** | Yassmine and teammate, Faculté des Sciences de Sfax (2026–2027) |
+| **Authors** | Yassmine Feki and Nour Al Houda Ben Slimene, Faculté des Sciences de Sfax (2026–2027) |
 | **Licence** | MIT (code) |
 
 ## Intended use
@@ -35,12 +37,17 @@ Figshare brain tumour dataset (3,064 slices, 233 patients) — see
 
 ### Performance (test set, patient-level split)
 
-| Metric | Value |
-|---|---|
-| Accuracy | *to fill* |
-| Macro-F1 | *to fill* |
-| Recall meningioma / glioma / pituitary | *to fill* |
-| Inference time (ms / image, device) | *to fill* |
+| Metric | Served model (final run) | ResNet-18, 5-fold CV |
+|---|---|---|
+| Accuracy | 0.895 | 0.926 ± 0.015 |
+| Macro-F1 | 0.888 | 0.920 ± 0.018 |
+| Recall meningioma / glioma / pituitary | *to fill from MLflow* | — |
+| Inference time (ms / image, device) | 2.7 ms, T4 GPU, batch size 1 | — |
+
+Reference points on the same test set: majority-class baseline 0.206 macro-F1, custom CNN
+0.862 (0.883 after Optuna tuning), EfficientNet-B0 0.909. Trained and tested on a leaky
+image-level split instead (a different test set), ResNet-18 reaches 0.963: scores reported
+that way on this dataset are inflated. See the README for the full comparison.
 
 ## Limitations and risks
 

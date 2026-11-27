@@ -50,15 +50,38 @@ CI (pytest, GitHub Actions), explainability (Grad-CAM) and serving (FastAPI, Gra
 
 ## Results
 
-> Filled in from `notebooks/03_results_analysis.ipynb` after the experiments
-> (test set, patient-level split).
+Colab T4 GPU, run of 2026-11-27. Full training logs:
+[`notebooks/runs/02_colab_runner_2026-11-27.ipynb`](notebooks/runs/02_colab_runner_2026-11-27.ipynb).
+Unless stated otherwise: fixed test set of 420 images, patient-level split, scores with
+test-time augmentation (horizontal flip), checkpoint chosen on validation macro-F1.
 
-| Model | Test accuracy | Test macro-F1 | Recall meningioma | Params | ms / image |
+| Model | Val macro-F1 | Test accuracy | Test macro-F1 | Params | ms / image |
 |---|---|---|---|---|---|
-| Majority class (baseline) | 0.448 | 0.206 | 0.000 | — | — |
-| Custom CNN | — | — | — | 2.39 M | — |
-| ResNet-18 | — | — | — | 11.2 M | — |
-| EfficientNet-B0 | — | — | — | 4.0 M | — |
+| Majority class (baseline) | — | 0.448 | 0.206 | — | — |
+| Custom CNN, no augmentation | 0.920 | 0.850 | 0.837 | 2.39 M | 1.7 |
+| Custom CNN | 0.933 | 0.871 | 0.862 | 2.39 M | 1.9 |
+| Custom CNN, Optuna-tuned | 0.822 | 0.886 | 0.883 | 1.24 M | 1.5 |
+| **ResNet-18** | 0.957 | **0.921** | **0.916** | 11.2 M | 2.5 |
+| EfficientNet-B0 | 0.946 | 0.917 | 0.909 | 4.0 M | 8.7 |
+| ResNet-18, 5-fold CV (mean ± std) | — | 0.926 ± 0.015 | 0.920 ± 0.018 | 11.2 M | — |
+| ResNet-18, final (registered, served) | 0.950 | 0.895 | 0.888 | 11.2 M | 2.7 |
+
+**Leakage.** The same ResNet-18 trained and tested on an *image-level* split reaches
+0.967 accuracy / 0.963 macro-F1 (on a different, leaky test set of 460 images): +0.047 macro-F1
+over the honest patient-level split, because 99.6% of those test images come from patients
+seen in training. Image-level scores on this dataset overestimate real performance.
+
+**Reading the table.**
+- Pretrained models beat the custom CNN by 2.6–5.4 points of macro-F1; ResNet-18 is the
+  best compromise of accuracy and speed (EfficientNet-B0 is 3.5x slower per image here).
+- Augmentation (+0.025) and Optuna tuning (+0.021, with half the parameters) both help the
+  custom CNN.
+- Run-to-run variance is large on 420 test images: the final ResNet-18 run (0.888) and the
+  first one (0.916) share the same settings, and the 5 folds span 0.891–0.937. The 5-fold
+  mean ± std is the most reliable estimate.
+- Inference time: batch size 1 on a T4 GPU.
+- Per-class recall (meningioma is the hardest class) is logged in MLflow: open `mlflow.db`
+  with `mlflow ui` or run [`notebooks/03_results_analysis.ipynb`](notebooks/03_results_analysis.ipynb).
 
 ## Architecture
 
