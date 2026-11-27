@@ -14,6 +14,7 @@ and the project uses [Semantic Versioning](https://semver.org/).
 - Per-class test recall for every model in the README and the model card (read from MLflow).
 
 ### Changed
+- Served model is the ResNet-18 run with the best validation macro-F1 (`resnet18-aug`, test macro-F1 0.916) instead of the registered second run (0.888), following the project's selection rule.
 - Colab runner works without DagsHub (rebuilds data with `dvc repro`, saves results to Google Drive) and clones the private repository with a `GITHUB_TOKEN` secret.
 - `make install-dev` and `bootstrap.sh` also install the serving dependencies (FastAPI, Gradio).
 

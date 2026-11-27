@@ -61,10 +61,10 @@ test-time augmentation (horizontal flip), checkpoint chosen on validation macro-
 | Custom CNN, no augmentation | 0.920 | 0.850 | 0.837 | 2.39 M | 1.7 |
 | Custom CNN | 0.933 | 0.871 | 0.862 | 2.39 M | 1.9 |
 | Custom CNN, Optuna-tuned | 0.822 | 0.886 | 0.883 | 1.24 M | 1.5 |
-| **ResNet-18** | 0.957 | **0.921** | **0.916** | 11.2 M | 2.5 |
+| **ResNet-18** (served) | 0.957 | **0.921** | **0.916** | 11.2 M | 2.5 |
 | EfficientNet-B0 | 0.946 | 0.917 | 0.909 | 4.0 M | 8.7 |
 | ResNet-18, 5-fold CV (mean ± std) | — | 0.926 ± 0.015 | 0.920 ± 0.018 | 11.2 M | — |
-| ResNet-18, final (registered, served) | 0.950 | 0.895 | 0.888 | 11.2 M | 2.7 |
+| ResNet-18, second run (registered in MLflow) | 0.950 | 0.895 | 0.888 | 11.2 M | 2.7 |
 
 **Per-class recall** (test set, from MLflow):
 
@@ -74,10 +74,10 @@ test-time augmentation (horizontal flip), checkpoint chosen on validation macro-
 | Custom CNN, no augmentation | 0.741 | 0.947 | 0.800 |
 | Custom CNN | 0.777 | 0.936 | 0.858 |
 | Custom CNN, Optuna-tuned | 0.991 | 0.862 | 0.825 |
-| **ResNet-18** | 0.929 | 0.947 | 0.875 |
+| **ResNet-18** (served) | 0.929 | 0.947 | 0.875 |
 | EfficientNet-B0 | 0.920 | 0.936 | 0.883 |
 | ResNet-18, 5-fold CV (mean ± std) | 0.925 ± 0.023 | 0.950 ± 0.008 | 0.890 ± 0.048 |
-| ResNet-18, final (registered, served) | 0.946 | 0.952 | 0.758 |
+| ResNet-18, second run (registered in MLflow) | 0.946 | 0.952 | 0.758 |
 
 **Leakage.** The same ResNet-18 trained and tested on an *image-level* split reaches
 0.967 accuracy / 0.963 macro-F1 (on a different, leaky test set of 460 images): +0.047 macro-F1
@@ -89,13 +89,16 @@ seen in training. Image-level scores on this dataset overestimate real performan
   best compromise of accuracy and speed (EfficientNet-B0 is 3.5x slower per image here).
 - Augmentation (+0.025) and Optuna tuning (+0.021, with half the parameters) both help the
   custom CNN.
-- Run-to-run variance is large on 420 test images: the final ResNet-18 run (0.888) and the
-  first one (0.916) share the same settings, and the 5 folds span 0.891–0.937. The 5-fold
+- Run-to-run variance is large on 420 test images: the two ResNet-18 runs share the same
+  settings yet score 0.916 and 0.888, and the 5 folds span 0.891–0.937. The 5-fold
   mean ± std is the most reliable estimate.
+- **Served model:** the first ResNet-18 run (`resnet18-aug-20261127-202800`), chosen by the
+  project's selection rule, the best *validation* macro-F1 (0.957 against 0.950 for the second
+  run). The second run is the one registered in the MLflow Model Registry (version 1).
 - Inference time: batch size 1 on a T4 GPU.
 - Per-class recall: the custom CNN mostly misses meningiomas (0.74–0.78) until tuning, which
   trades glioma recall for meningioma recall. With pretrained models the weakest class becomes
-  pituitary tumour (0.76–0.93 depending on the run).
+  pituitary tumour (0.76–0.93 depending on the run; 0.875 for the served model).
 - Optuna: 3 of the 20 trials ran to the end; the median pruner stopped the other 17 early.
   MLflow shows those as `FAILED` with the tag `pruned=true`.
 - Everything is in MLflow: open `mlflow.db` with `mlflow ui --backend-store-uri sqlite:///mlflow.db`

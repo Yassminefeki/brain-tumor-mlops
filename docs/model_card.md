@@ -9,7 +9,7 @@
 |---|---|
 | **Task** | 3-class classification of a single MRI slice: meningioma / glioma / pituitary tumour |
 | **Architectures compared** | Custom CNN (2.39 M params), ResNet-18, EfficientNet-B0 (+ optional ResNet-50, DenseNet-121) |
-| **Selected model** | ResNet-18, two-stage fine-tuning from ImageNet (11.2 M params); run `resnet18-final-20261127-210836`, registered as `brain-tumor-classifier` version 1 |
+| **Selected model** | ResNet-18, two-stage fine-tuning from ImageNet (11.2 M params); run `resnet18-aug-20261127-202800` (best epoch 16), served as `models/best.pt`. Chosen on validation macro-F1 (0.957) among the ResNet-18 runs; the second run `resnet18-final-20261127-210836` (validation 0.950) is the one registered as `brain-tumor-classifier` version 1 |
 | **Framework** | PyTorch, torchvision |
 | **Input** | one grayscale slice, any size; clipped to 0.5–99.5 percentiles, scaled to [0, 1], resized to 224 × 224 |
 | **Output** | probabilities for the 3 classes |
@@ -36,17 +36,20 @@ Figshare brain tumour dataset (3,064 slices, 233 patients) — see
 
 ### Performance (test set, patient-level split)
 
-| Metric | Served model (final run) | ResNet-18, 5-fold CV |
+| Metric | Served model (`resnet18-aug`) | ResNet-18, 5-fold CV |
 |---|---|---|
-| Accuracy | 0.895 | 0.926 ± 0.015 |
-| Macro-F1 | 0.888 | 0.920 ± 0.018 |
-| Recall meningioma / glioma / pituitary | 0.946 / 0.952 / 0.758 | 0.925 ± 0.023 / 0.950 ± 0.008 / 0.890 ± 0.048 |
-| Inference time (ms / image, device) | 2.7 ms, T4 GPU, batch size 1 | — |
+| Accuracy | 0.921 | 0.926 ± 0.015 |
+| Macro-F1 | 0.916 | 0.920 ± 0.018 |
+| Recall meningioma / glioma / pituitary | 0.929 / 0.947 / 0.875 | 0.925 ± 0.023 / 0.950 ± 0.008 / 0.890 ± 0.048 |
+| Inference time (ms / image, device) | 2.5 ms, T4 GPU, batch size 1 | — |
 
 Reference points on the same test set: majority-class baseline 0.206 macro-F1, custom CNN
 0.862 (0.883 after Optuna tuning), EfficientNet-B0 0.909. Trained and tested on a leaky
 image-level split instead (a different test set), ResNet-18 reaches 0.963: scores reported
 that way on this dataset are inflated. See the README for the full comparison.
+
+The API applies no test-time augmentation. Sent through the API on CPU, the served model gets
+390 of the 420 test images right (accuracy 0.929; macro-F1 without TTA on Colab: 0.925).
 
 ## Limitations and risks
 
@@ -57,7 +60,7 @@ that way on this dataset are inflated. See the README for the full comparison.
 - The small test set (~35 patients) gives wide confidence intervals; cross-validation
   results are more reliable for ranking models.
 - Meningioma, the minority class, is the hardest class for the custom CNN. For the served
-  ResNet-18 the weakest class is pituitary tumour (recall 0.758): about 1 pituitary case in 4
+  ResNet-18 the weakest class is pituitary tumour (recall 0.875): about 1 pituitary case in 8
   is classified as another tumour type.
 
 ## Ethical considerations
