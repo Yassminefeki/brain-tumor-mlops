@@ -255,6 +255,7 @@ brain-tumor-mlops/
 
 | Document | Content |
 |---|---|
+| [Project guide](docs/project_guide.md) | **Everything in one place**: data, models, training, results, MLOps, Q&A |
 | [Architecture](docs/architecture.md) | Components, local vs. remote, how they communicate |
 | [Data pipeline](docs/data_pipeline.md) | Each DVC stage, its inputs, outputs and checks |
 | [Models](docs/models.md) | Custom CNN design and pretrained transfer-learning recipe |

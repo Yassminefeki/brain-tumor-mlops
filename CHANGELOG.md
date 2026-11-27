@@ -14,6 +14,8 @@ and the project uses [Semantic Versioning](https://semver.org/).
 - Per-class test recall for every model in the README and the model card (read from MLflow).
 - `notebooks/03_results_analysis.ipynb` run on the MLflow results: `reports/comparison.{csv,md}`, accuracy-vs-size figure (CV folds as one mean ± std error bar), test-set CV summary; kept with its outputs. `docs/experiments.md` results table and strengths/weaknesses filled in.
 
+- `docs/project_guide.md`: complete project reference (data, pipeline, models, training, results, MLOps, serving, limitations, likely questions, glossary).
+
 ### Changed
 - Gradio demo shows one clickable test-set example per class (meningioma, glioma, pituitary) when the dataset is available locally.
 - Dockerfile installs third-party packages in their own layer, before copying the code and README: a code or documentation change rebuilds in seconds instead of reinstalling everything.
