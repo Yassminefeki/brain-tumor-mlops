@@ -11,6 +11,7 @@ and the project uses [Semantic Versioning](https://semver.org/).
 - Results of the Colab T4 run of 2026-11-27 in the README and the model card: ResNet-18 is the best model (test macro-F1 0.916; 0.920 ± 0.018 over 5 folds), custom CNN 0.862 (0.883 tuned), EfficientNet-B0 0.909.
 - Executed Colab notebooks kept with their outputs (`notebooks/01_eda.ipynb`, `notebooks/runs/`), EDA figures in `reports/figures/`, tuned custom CNN parameters in `configs/best_params/`.
 - Colab runner section 3b restores the MLflow runs of earlier sessions from Google Drive.
+- Per-class test recall for every model in the README and the model card (read from MLflow).
 
 ### Changed
 - Colab runner works without DagsHub (rebuilds data with `dvc repro`, saves results to Google Drive) and clones the private repository with a `GITHUB_TOKEN` secret.
@@ -22,6 +23,7 @@ and the project uses [Semantic Versioning](https://semver.org/).
 - `.env.example` defaults to local MLflow tracking instead of a placeholder DagsHub URL.
 - Plain `pytest` can import the `api` package.
 - JSON reports end with a newline, as expected by the pre-commit hook.
+- `.gitignore` covers every `mlflow*.db`, not only `mlflow.db`.
 
 ## [0.1.0] - 2026-11-27
 

@@ -10,7 +10,7 @@
 /mlruns/
 /mlartifacts/
 /optuna*.db
-/mlflow.db
+/mlflow*.db
 /reports/runs/
 
 # ---- Secrets ----

@@ -2,7 +2,6 @@
 
 > Performance from the Colab T4 run of 2026-11-27 (logs in
 > [`notebooks/runs/02_colab_runner_2026-11-27.ipynb`](../notebooks/runs/02_colab_runner_2026-11-27.ipynb)).
-> Per-class recall: fill in from MLflow (`mlflow.db` on Google Drive) before submission.
 
 ## Model details
 
@@ -41,7 +40,7 @@ Figshare brain tumour dataset (3,064 slices, 233 patients) — see
 |---|---|---|
 | Accuracy | 0.895 | 0.926 ± 0.015 |
 | Macro-F1 | 0.888 | 0.920 ± 0.018 |
-| Recall meningioma / glioma / pituitary | *to fill from MLflow* | — |
+| Recall meningioma / glioma / pituitary | 0.946 / 0.952 / 0.758 | 0.925 ± 0.023 / 0.950 ± 0.008 / 0.890 ± 0.048 |
 | Inference time (ms / image, device) | 2.7 ms, T4 GPU, batch size 1 | — |
 
 Reference points on the same test set: majority-class baseline 0.206 macro-F1, custom CNN
@@ -57,7 +56,9 @@ that way on this dataset are inflated. See the README for the full comparison.
 - Works on single 2-D slices, not on full 3-D volumes.
 - The small test set (~35 patients) gives wide confidence intervals; cross-validation
   results are more reliable for ranking models.
-- Meningioma, the minority class, is the most frequently confused with glioma.
+- Meningioma, the minority class, is the hardest class for the custom CNN. For the served
+  ResNet-18 the weakest class is pituitary tumour (recall 0.758): about 1 pituitary case in 4
+  is classified as another tumour type.
 
 ## Ethical considerations
 

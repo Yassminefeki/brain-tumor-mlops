@@ -66,6 +66,19 @@ test-time augmentation (horizontal flip), checkpoint chosen on validation macro-
 | ResNet-18, 5-fold CV (mean ± std) | — | 0.926 ± 0.015 | 0.920 ± 0.018 | 11.2 M | — |
 | ResNet-18, final (registered, served) | 0.950 | 0.895 | 0.888 | 11.2 M | 2.7 |
 
+**Per-class recall** (test set, from MLflow):
+
+| Model | Meningioma | Glioma | Pituitary |
+|---|---|---|---|
+| Majority class (baseline) | 0.000 | 1.000 | 0.000 |
+| Custom CNN, no augmentation | 0.741 | 0.947 | 0.800 |
+| Custom CNN | 0.777 | 0.936 | 0.858 |
+| Custom CNN, Optuna-tuned | 0.991 | 0.862 | 0.825 |
+| **ResNet-18** | 0.929 | 0.947 | 0.875 |
+| EfficientNet-B0 | 0.920 | 0.936 | 0.883 |
+| ResNet-18, 5-fold CV (mean ± std) | 0.925 ± 0.023 | 0.950 ± 0.008 | 0.890 ± 0.048 |
+| ResNet-18, final (registered, served) | 0.946 | 0.952 | 0.758 |
+
 **Leakage.** The same ResNet-18 trained and tested on an *image-level* split reaches
 0.967 accuracy / 0.963 macro-F1 (on a different, leaky test set of 460 images): +0.047 macro-F1
 over the honest patient-level split, because 99.6% of those test images come from patients
@@ -80,8 +93,13 @@ seen in training. Image-level scores on this dataset overestimate real performan
   first one (0.916) share the same settings, and the 5 folds span 0.891–0.937. The 5-fold
   mean ± std is the most reliable estimate.
 - Inference time: batch size 1 on a T4 GPU.
-- Per-class recall (meningioma is the hardest class) is logged in MLflow: open `mlflow.db`
-  with `mlflow ui` or run [`notebooks/03_results_analysis.ipynb`](notebooks/03_results_analysis.ipynb).
+- Per-class recall: the custom CNN mostly misses meningiomas (0.74–0.78) until tuning, which
+  trades glioma recall for meningioma recall. With pretrained models the weakest class becomes
+  pituitary tumour (0.76–0.93 depending on the run).
+- Optuna: 3 of the 20 trials ran to the end; the median pruner stopped the other 17 early.
+  MLflow shows those as `FAILED` with the tag `pruned=true`.
+- Everything is in MLflow: open `mlflow.db` with `mlflow ui --backend-store-uri sqlite:///mlflow.db`
+  or run [`notebooks/03_results_analysis.ipynb`](notebooks/03_results_analysis.ipynb).
 
 ## Architecture
 
