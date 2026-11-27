@@ -18,6 +18,15 @@ from brain_tumor.inference import Predictor, load_image_bytes
 
 predictor = Predictor(os.environ.get("MODEL_CHECKPOINT", "models/best.pt"))
 
+# One test-set slice per class (patient-level split: never seen in training), shown as
+# clickable examples when the dataset is available locally (not in the Docker image).
+EXAMPLE_IDS = {"meningioma": 132, "glioma": 2879, "pituitary": 1217}
+EXAMPLES = [
+    [path]
+    for path in (os.path.join("data", "interim", f"{i}.mat") for i in EXAMPLE_IDS.values())
+    if os.path.exists(path)
+] or None
+
 
 def analyse(path: str) -> tuple[dict[str, float], np.ndarray]:
     if path is None:
@@ -38,6 +47,9 @@ demo = gr.Interface(
     title="Brain tumour MRI classifier",
     description=f"Model: {predictor.model_name}. Classes: meningioma, glioma, pituitary tumour. "
     "Educational project — not a medical diagnosis.",
+    examples=EXAMPLES,
+    example_labels=list(EXAMPLE_IDS) if EXAMPLES and len(EXAMPLES) == len(EXAMPLE_IDS) else None,
+    cache_examples=False,
     flagging_mode="never",
 )
 

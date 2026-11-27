@@ -15,6 +15,8 @@ and the project uses [Semantic Versioning](https://semver.org/).
 - `notebooks/03_results_analysis.ipynb` run on the MLflow results: `reports/comparison.{csv,md}`, accuracy-vs-size figure (CV folds as one mean ± std error bar), test-set CV summary; kept with its outputs. `docs/experiments.md` results table and strengths/weaknesses filled in.
 
 ### Changed
+- Gradio demo shows one clickable test-set example per class (meningioma, glioma, pituitary) when the dataset is available locally.
+- Dockerfile installs third-party packages in their own layer, before copying the code and README: a code or documentation change rebuilds in seconds instead of reinstalling everything.
 - Served model is the ResNet-18 run with the best validation macro-F1 (`resnet18-aug`, test macro-F1 0.916) instead of the registered second run (0.888), following the project's selection rule.
 - Colab runner works without DagsHub (rebuilds data with `dvc repro`, saves results to Google Drive) and clones the private repository with a `GITHUB_TOKEN` secret.
 - `make install-dev` and `bootstrap.sh` also install the serving dependencies (FastAPI, Gradio).

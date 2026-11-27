@@ -13,12 +13,16 @@ WORKDIR /app
 # CPU-only PyTorch keeps the image small.
 RUN pip install --index-url https://download.pytorch.org/whl/cpu torch torchvision
 
-COPY requirements.txt requirements-api.txt pyproject.toml README.md LICENSE ./
-COPY src ./src
+# Third-party dependencies first, in their own cached layer: editing the code or the
+# README then rebuilds in seconds instead of reinstalling everything.
 # Only what inference needs: no DVC / MLflow / Optuna in the serving image.
+COPY requirements-api.txt ./
 RUN pip install -r requirements-api.txt numpy pandas scikit-learn tqdm pyyaml h5py \
-    opencv-python-headless matplotlib \
-    && pip install --no-deps -e .
+    opencv-python-headless matplotlib
+
+COPY requirements.txt pyproject.toml README.md LICENSE ./
+COPY src ./src
+RUN pip install --no-deps -e .
 
 COPY api ./api
 COPY params.yaml ./
