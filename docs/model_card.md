@@ -38,8 +38,8 @@ Figshare brain tumour dataset (3,064 slices, 233 patients) — see
 
 | Metric | Served model (`resnet18-aug`) | ResNet-18, 5-fold CV |
 |---|---|---|
-| Accuracy | 0.921 | 0.926 ± 0.015 |
-| Macro-F1 | 0.916 | 0.920 ± 0.018 |
+| Accuracy | 0.921 | 0.926 ± 0.016 |
+| Macro-F1 | 0.916 | 0.921 ± 0.017 |
 | Recall meningioma / glioma / pituitary | 0.929 / 0.947 / 0.875 | 0.925 ± 0.023 / 0.950 ± 0.008 / 0.890 ± 0.048 |
 | Inference time (ms / image, device) | 2.5 ms, T4 GPU, batch size 1 | — |
 

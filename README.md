@@ -63,8 +63,13 @@ test-time augmentation (horizontal flip), checkpoint chosen on validation macro-
 | Custom CNN, Optuna-tuned | 0.822 | 0.886 | 0.883 | 1.24 M | 1.5 |
 | **ResNet-18** (served) | 0.957 | **0.921** | **0.916** | 11.2 M | 2.5 |
 | EfficientNet-B0 | 0.946 | 0.917 | 0.909 | 4.0 M | 8.7 |
-| ResNet-18, 5-fold CV (mean ± std) | — | 0.926 ± 0.015 | 0.920 ± 0.018 | 11.2 M | — |
+| ResNet-18, 5-fold CV (mean ± std) | 0.932 ± 0.041 | 0.926 ± 0.016 | 0.921 ± 0.017 | 11.2 M | — |
 | ResNet-18, second run (registered in MLflow) | 0.950 | 0.895 | 0.888 | 11.2 M | 2.7 |
+
+![Test macro-F1 against model size](reports/figures/accuracy_vs_size.png)
+
+Full table with training time: [`reports/comparison.md`](reports/comparison.md), built by
+[`notebooks/03_results_analysis.ipynb`](notebooks/03_results_analysis.ipynb).
 
 **Per-class recall** (test set, from MLflow):
 

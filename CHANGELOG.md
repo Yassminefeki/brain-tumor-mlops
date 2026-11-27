@@ -8,10 +8,11 @@ and the project uses [Semantic Versioning](https://semver.org/).
 
 ### Added
 - Dataset built with `dvc repro` (`dvc.lock`), all 9 validation checks pass; majority-class baseline result.
-- Results of the Colab T4 run of 2026-11-27 in the README and the model card: ResNet-18 is the best model (test macro-F1 0.916; 0.920 ± 0.018 over 5 folds), custom CNN 0.862 (0.883 tuned), EfficientNet-B0 0.909.
+- Results of the Colab T4 run of 2026-11-27 in the README and the model card: ResNet-18 is the best model (test macro-F1 0.916; 0.921 ± 0.017 over 5 folds), custom CNN 0.862 (0.883 tuned), EfficientNet-B0 0.909.
 - Executed Colab notebooks kept with their outputs (`notebooks/01_eda.ipynb`, `notebooks/runs/`), EDA figures in `reports/figures/`, tuned custom CNN parameters in `configs/best_params/`.
 - Colab runner section 3b restores the MLflow runs of earlier sessions from Google Drive.
 - Per-class test recall for every model in the README and the model card (read from MLflow).
+- `notebooks/03_results_analysis.ipynb` run on the MLflow results: `reports/comparison.{csv,md}`, accuracy-vs-size figure (CV folds as one mean ± std error bar), test-set CV summary; kept with its outputs. `docs/experiments.md` results table and strengths/weaknesses filled in.
 
 ### Changed
 - Served model is the ResNet-18 run with the best validation macro-F1 (`resnet18-aug`, test macro-F1 0.916) instead of the registered second run (0.888), following the project's selection rule.
@@ -19,6 +20,7 @@ and the project uses [Semantic Versioning](https://semver.org/).
 - `make install-dev` and `bootstrap.sh` also install the serving dependencies (FastAPI, Gradio).
 
 ### Fixed
+- 5-fold CV figures computed from the exact MLflow values (0.921 ± 0.017 macro-F1, 0.926 ± 0.016 accuracy) instead of the 3-digit log values.
 - Figshare downloads retry and resume after network errors; DVC keeps finished downloads (`persist`).
 - Docker image installs `pandas`, `scikit-learn` and `tqdm`, needed by the inference code.
 - `.env.example` defaults to local MLflow tracking instead of a placeholder DagsHub URL.
