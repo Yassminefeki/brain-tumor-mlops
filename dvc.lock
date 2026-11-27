@@ -157,5 +157,5 @@ stages:
     outs:
     - path: reports/data_validation.json
       hash: md5
-      md5: db83ebbd718b6f4ae5f4c9f85ca84940
-      size: 1209
+      md5: aef4cf4da48ded7c0445e1a80cc171d3
+      size: 1210

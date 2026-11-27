@@ -76,6 +76,7 @@ def save_json(data: Any, path: str | os.PathLike) -> Path:
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w") as f:
         json.dump(data, f, indent=2, default=_json_default)
+        f.write("\n")  # trailing newline, as expected by the end-of-file pre-commit hook
     return path
 
 
