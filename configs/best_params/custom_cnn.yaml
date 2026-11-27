@@ -1,0 +1,13 @@
+model: custom_cnn
+best_val_macro_f1: 0.8805905495736029
+n_trials: 20
+overrides:
+  train.lr: 0.0008012737503998541
+  train.weight_decay: 2.621087878265438e-05
+  models.custom_cnn.dropout_before_dense: 0.3168578594140873
+  models.custom_cnn.dense_units: 256
+  models.custom_cnn.filters:
+  - 32
+  - 64
+  - 128
+  - 256
